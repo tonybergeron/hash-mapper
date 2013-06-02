@@ -1,0 +1,120 @@
+<!doctype html>
+<html ng-app="myApp">
+<head>
+	<title>Angular-Google-Maps</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+	<link rel="shortcut icon" href="ico/favicon.ico"/>
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css"/>
+	<link rel="stylesheet" href="css/app.css"/>
+	<link href="css/print.css" rel="stylesheet" media="print"/>
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png"/>
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png"/>
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png"/>
+	<link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png"/>
+
+	<script src="js/lib/angular/angular.js"></script>
+	<script src="js/lib/script/script.min.js"></script>
+	<script src="js/lib/angular/angular-resource.min.js"></script>
+	<script src="js/lib/jquery/jquery-1.7.2.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBTmi_pcXMZtLX5MWFRQgbVEYx-h-pDXO4&amp;sensor=false"></script>
+	<script src="js/app.js"></script>
+	<script src="js/services.js"></script>
+	<script src="js/controllers.js"></script>
+	<script src="js/filters.js"></script>
+	<script src="js/directives.js"></script>
+</head>
+<body ng-controller="MainCtrl">
+
+	<!-- NAVBAR -->
+	<div class="navbar navbar-fixed-top">
+
+		<div class="navbar-inner">
+			<table class="nav pull">
+				<tr>
+					<td>
+						<a href="#/" id="home-button">
+							<img title="Home" src="img/home.png" />
+						</a>
+					</td>
+				</tr>
+			</table>
+
+			<table class="nav pull-right">
+				<tr>
+					<td id="map-button" ng-show="!mapShown()">
+						<a href="#/map">
+							<img title="Map" src="img/map.png" />
+						</a>
+					</td>
+
+					<td id="list-button" ng-show="mapShown()">
+						<a href="#/list">
+							<img title="List" src="img/list.png" />
+						</a>
+					</td>
+
+					<td id="map-position-button" ng-show="mapShown()">
+						<img title="Position" src="img/position.png" />
+					</td>
+
+					<td id="map-add-button" ng-show="mapShown()">
+						<img title="Add" src="img/add.png" />
+					</td>
+
+					<!--
+						TODO: check if positionTracking is on and current position is not 'close' (how?), prompt to navigate from current position to this 'center' point. Or if user has a 'home' position (private), offer to get directions home.
+						The following will return directions from saddr to daddr:
+						http://maps.google.com/?saddr=9.993552791991132,-84.20888416469096&daddr=9.9829723,-84.1699572
+					-->
+					<td id="map-directions-button" ng-show="mapShown()">
+						<a href="https://maps.google.com/maps?q={{mapCenter.lat}},{{mapCenter.lng}}&t={{mapType}}&z={{mapZoom}}">
+							<img title="Directions" src="img/directions.png" />
+						</a>
+					</td>
+
+					<td id="search-button">
+						<a href="#/search">
+							<img title="Search" src="img/search.png" />
+						</a>
+					</td>
+
+					<td id="layers-button" ng-show="mapShown()">
+						<img title="Layers" src="img/layers.png" />
+					</td>
+
+					<td id="menu-button">
+						<a href="#/menu">
+							<img title="Menu" src="img/menu.png" />
+						</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<!-- MAIN VIEW -->
+	<div class="container-fluid" ng-hide="mapShown()" ng-view></div>
+
+	<!-- MAP CANVAS ELEMENT -->
+	<div id="map" ng-show="mapShown()"></div>
+
+	<!-- MAP CROSSHAIR ELEMENT -->
+	<div id="map-crosshair" ng-show="mapShown()">
+		<img src="img/crosshair.png" />
+	</div>
+
+	<!-- MAP INFO DIV -->
+	<!--
+	<div id="map-info" ng-show="mapShown()">
+		<a href="https://maps.google.com/maps?q={{mapCenter.lat}},{{mapCenter.lng}}&t={{mapType}}&z={{mapZoom}}">Google Map</a>
+		&mdash;
+		<a href="{{protocol}}://{{host}}#/maps?q={{mapCenter.lat}},{{mapCenter.lng}}&t={{mapType}}&z={{mapZoom}}">OurField Map</a>
+	</div>
+	-->
+
+
+</body>
+</html>
