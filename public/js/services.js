@@ -16,7 +16,16 @@
     return InfoWindow;
 
   })();
+  
+  var markerArray = [];
+  var currentMarker;
 
+
+  //Temp button to show information
+  $('#printMarkerArray').live('click', function(event) {
+	console.log(markerArray);
+  });
+  
   GMarker = (function() {
 
     function GMarker(map, lat, lng) {
@@ -96,6 +105,8 @@
       this.onPositionButtonClick = __bind(this.onPositionButtonClick, this);
 
       this.addPlace = __bind(this.addPlace, this);
+      
+	  this.clickAddPlace = __bind(this.clickAddPlace, this);
 
       this.getDirections = __bind(this.getDirections, this);
 
@@ -159,12 +170,16 @@
         center: new google.maps.LatLng(this.center.lat, this.center.lng),
         mapTypeId: this.mapTypes[this.mapType]
       });
+	  
+	  /* listeners */
       addListener = google.maps.event.addListener;
       addListener(this.map, 'center_changed', this.onCenterChanged);
       addListener(this.map, 'maptypeid_changed', this.onTypeChange);
       addListener(this.map, 'zoom_changed', this.onZoomChange);
       addListener(this.map, 'dragstart', this.onDragStart);
       addListener(this.map, 'dragend', this.onDragEnd);
+	  addListener(this.map, 'click', this.clickAddPlace);
+	  
       this.rootScope.protocol = this.location.protocol();
       this.rootScope.host = this.location.host();
       this.rootScope.mapCenter = this.center;
@@ -175,6 +190,26 @@
 
     GMap.prototype.getDirections = function() {
       return console.log('getDirections');
+    };
+	
+	GMap.prototype.clickAddPlace = function(event) {
+      var lat, lng, marker;
+      lat = event.latLng.jb;
+      lng = event.latLng.kb;
+      marker = new GMarker(this.map, lat, lng); //marker created
+	  
+	  //Function this later
+	  //trackPath(marker);
+	  
+	  //add marker to array and 
+	  var seg = {
+		to: marker, 
+		from: (currentMarker != null) ? currentMarker : '',
+		line: 'solid'
+	  }
+	  markerArray.push(seg); //Push tracking to array
+	  currentMarker = marker; //track the new marker as the currentMarker
+	  return marker;
     };
 
     GMap.prototype.addPlace = function() {

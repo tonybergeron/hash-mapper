@@ -1,7 +1,7 @@
 <!doctype html>
 <html ng-app="myApp">
 <head>
-	<title>Angular-Google-Maps</title>
+	<title>Hash Mapper</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 	<link rel="shortcut icon" href="ico/favicon.ico"/>
@@ -35,9 +35,12 @@
 			<table class="nav pull">
 				<tr>
 					<td>
-						<a href="#/" id="home-button">
-							<img title="Home" src="img/home.png" />
-						</a>
+						<div style="padding:8px">
+							<a href="#/" id="home-button" style="text-decoration:none; font-size:30px; color:white;">
+								Hash Mapper
+								<!-- <img title="Home" src="img/home.png" /> -->
+							</a>
+						</div>
 					</td>
 				</tr>
 			</table>
@@ -107,14 +110,18 @@
 	</div>
 
 	<!-- MAP INFO DIV -->
-	<!--
+	
 	<div id="map-info" ng-show="mapShown()">
+		<!--
 		<a href="https://maps.google.com/maps?q={{mapCenter.lat}},{{mapCenter.lng}}&t={{mapType}}&z={{mapZoom}}">Google Map</a>
 		&mdash;
 		<a href="{{protocol}}://{{host}}#/maps?q={{mapCenter.lat}},{{mapCenter.lng}}&t={{mapType}}&z={{mapZoom}}">OurField Map</a>
+		-->
+		<span id="currentMarker">current</span><br/>
+		<span id="previousMarker">previous</span><br/>
+		<span id="printMarkerArray">markerArray</span>
 	</div>
-	-->
-
+	
 
 </body>
 </html>
