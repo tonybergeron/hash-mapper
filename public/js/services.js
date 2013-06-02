@@ -16,15 +16,10 @@
     return InfoWindow;
 
   })();
-  
-  var markerArray = [];
-  var currentMarker;
 
-
-  //Temp button to show information
-  $('#printMarkerArray').live('click', function(event) {
-	console.log(markerArray);
-  });
+  var markerArray = new google.maps.MVCArray(); //for the marker storage
+  var segmentArray = new google.maps.MVCArray(); //for the segment storage
+  var currentMarker; //currentMarker tracker
   
   GMarker = (function() {
 
@@ -39,6 +34,8 @@
       this.show = __bind(this.show, this);
 
       this.dragend = __bind(this.dragend, this);
+	  
+	  this.updateMarkerLocation = __bind(this.updateMarkerLocation, this);
 
       this.position = new google.maps.LatLng(this.lat, this.lng);
       this.render();
@@ -54,11 +51,16 @@
     };
 
     GMarker.prototype.dragend = function() {
-      if (confirm("Are you sure you want to move this marker?")) {
+		//this.marker.setPosition(this.marker.getPosition());
+		//alert(this.marker.position);
+		//this.updateMarkerLocation();
+      /*
+	  if (confirm("Are you sure you want to move this marker?")) {
 
       } else {
 
       }
+	  */
     };
 
     GMarker.prototype.show = function() {
@@ -80,6 +82,25 @@
       event.preventDefault();
       return alert('move');
     };
+	
+	GMarker.prototype.updateMarkerLocation = function() {
+		//go through marker array and find all segmenets with that index involved
+		segmentArray.forEach(function(elm, i) {
+			//console.log(i);
+			elm.line.setMap(null); //clear the map of the line
+			
+			var start = markerArray.getAt(elm.indexStart);
+			var end = markerArray.getAt(elm.indexEnd);
+			
+			var latlngs = [];
+			latlngs.push(new google.maps.LatLng(start.lat, start.lng)); //from
+			latlngs.push(new google.maps.LatLng(end.lat, end.lng)); //to
+			console.log(latlngs);
+			elm.line.setPath(latlngs); //set the path again
+			
+		});
+		
+	}
 
     return GMarker;
 
@@ -107,6 +128,8 @@
       this.addPlace = __bind(this.addPlace, this);
       
 	  this.clickAddPlace = __bind(this.clickAddPlace, this);
+	  
+	  this.drawSegments = __bind(this.drawSegments, this);
 
       this.getDirections = __bind(this.getDirections, this);
 
@@ -138,6 +161,7 @@
         m: 'roadmap',
         h: 'hybrid'
       };
+	  
       ({
         mapTypeControl: true,
         mapTypeControlOptions: {
@@ -197,20 +221,51 @@
       lat = event.latLng.jb;
       lng = event.latLng.kb;
       marker = new GMarker(this.map, lat, lng); //marker created
+	  var toIndex = (markerArray.push(marker) - 1) //marker added to array
 	  
-	  //Function this later
-	  //trackPath(marker);
-	  
-	  //add marker to array and 
-	  var seg = {
-		to: marker, 
-		from: (currentMarker != null) ? currentMarker : '',
-		line: 'solid'
+	  if(this.currentMarkerIndex != null) {
+		 var fromIndex = this.currentMarkerIndex;
+		 var type = 'solid';
+		 this.drawSegment(fromIndex, toIndex, type);
 	  }
-	  markerArray.push(seg); //Push tracking to array
-	  currentMarker = marker; //track the new marker as the currentMarker
+	  
+	  this.currentMarkerIndex = toIndex; //track the new marker as the currentMarkerIndex
+	  
+	  console.log('new item at ' + toIndex); //console out
+	  
 	  return marker;
     };
+	
+	//Draws the segments
+	GMap.prototype.drawSegment = function(indexStart, indexEnd, type) {
+		var map = this.map;
+		var start = markerArray.getAt(indexStart);
+		var end = markerArray.getAt(indexEnd);
+		
+		var latlngs = [];
+		latlngs.push(new google.maps.LatLng(start.lat, start.lng)); //from
+		latlngs.push(new google.maps.LatLng(end.lat, end.lng)); //to
+				
+		//Create a path
+		var line = new google.maps.Polyline({
+			map: map,
+			strokeColor: "#FF0000",
+			strokeOpacity: 1.0,
+			strokeWeight: 2,
+			path: latlngs
+		});
+		
+		line.setMap(map); //draw the line
+		
+		var obj = {
+			indexStart: indexStart,
+			indexEnd: indexEnd,
+			type: type,
+			line: line
+		}
+		
+		segmentArray.push(obj); //adding line to the segmentArray
+	}
 
     GMap.prototype.addPlace = function() {
       var lat, lng, marker;
